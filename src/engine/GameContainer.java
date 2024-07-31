@@ -1,8 +1,9 @@
 package engine;
 
-public class GameContainer implements Runnable {
+public final class GameContainer implements Runnable {
 
 	private Thread thread;
+	private Window window;
 
 	private boolean isRunning = false;
 
@@ -14,8 +15,13 @@ public class GameContainer implements Runnable {
 	private double timeDiference;
 	private double accumulatedRepaintTime;
 
-	double accumulatedFrameTime = 0;
-	int frames = 0;
+	double accumulatedFrameTime;
+	int frames;
+	
+	private final String TITLE = "MeuGame2D";
+	private final int WIDTH = 320;
+	private final int HEIGHT = 240;
+	private float scale = 2.4f;
 
 	public GameContainer() {
 
@@ -23,6 +29,8 @@ public class GameContainer implements Runnable {
 
 	public synchronized void start() {
 		thread = new Thread(this);
+		window = new Window(this);
+		
 		thread.run();
 	}
 
@@ -51,10 +59,10 @@ public class GameContainer implements Runnable {
 	}
 
 	private void calculateTimePass() {
-		if(currentTime == 0) {
+		if (currentTime == 0) {
 			previousTime = getCurrentTimeInSecondsWithNanoPrecision();
 		}
-		
+
 		currentTime = getCurrentTimeInSecondsWithNanoPrecision();
 		timeDiference = currentTime - previousTime;
 		previousTime = currentTime;
@@ -62,7 +70,7 @@ public class GameContainer implements Runnable {
 		accumulatedRepaintTime += timeDiference;
 		accumulatedFrameTime += timeDiference;
 	}
-	
+
 	private double getCurrentTimeInSecondsWithNanoPrecision() {
 		return System.nanoTime() / 1_000_000_000.0;
 	}
@@ -85,6 +93,10 @@ public class GameContainer implements Runnable {
 	}
 
 	private void updateGameState() {
+		printFPS();
+	}
+
+	private void printFPS() {
 		if (accumulatedFrameTime >= 1.0) {
 			System.out.println("FPS: " + frames);
 			accumulatedFrameTime = 0;
@@ -93,8 +105,28 @@ public class GameContainer implements Runnable {
 	}
 
 	private void renderGameCanvas() {
+		window.clear();
+		window.update();
 		frames++;
 	}
 
+	public float getScale() {
+		return scale;
+	}
 
+	public void setScale(float scale) {
+		this.scale = scale;
+	}
+
+	public String getTITLE() {
+		return TITLE;
+	}
+
+	public int getWIDTH() {
+		return WIDTH;
+	}
+
+	public int getHEIGHT() {
+		return HEIGHT;
+	}
 }

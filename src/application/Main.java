@@ -5,7 +5,8 @@ import engine.GameContainer;
 public class Main {
 
 	public static void main(String[] args) {
-		new GameContainer().start();
+		GameContainer gc = new GameContainer();
+		gc.start();
 
 	}
 
