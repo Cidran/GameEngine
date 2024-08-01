@@ -5,6 +5,7 @@ public class GameContainer implements Runnable {
 	private Thread thread;
 	private Window window;
 	private Renderer renderer;
+	private Input input;
 
 	private boolean isRunning = false;
 
@@ -14,7 +15,7 @@ public class GameContainer implements Runnable {
 	private double previousTime;
 	private double currentTime;
 	private double timeDiference;
-	private double accumulatedRepaintTime;
+	private double accumulatedRenderTime;
 
 	private double accumulatedFrameTime;
 	private int frames;
@@ -25,24 +26,15 @@ public class GameContainer implements Runnable {
 	private float scale = 2.4f;
 
 	public GameContainer() {
-
 	}
 
 	public synchronized void start() {
-		thread = new Thread(this);
-		window = new Window(this);
-		renderer = new Renderer(this);
-
+		initializeComponents();
 		thread.run();
 	}
 
 	public synchronized void stop() {
 		isRunning = false;
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -60,27 +52,34 @@ public class GameContainer implements Runnable {
 			}
 		}
 	}
+	
+	private void initializeComponents() {
+		thread = new Thread(this);
+		window = new Window(this);
+		renderer = new Renderer(this);
+		input = new Input(this);
+	}
 
 	private void calculateTimePass() {
 		if (currentTime == 0) {
-			previousTime = getCurrentTimeInSecondsWithNanoPrecision();
+			previousTime = getTimeInSecondsWithNanoPrecision();
 		}
 
-		currentTime = getCurrentTimeInSecondsWithNanoPrecision();
+		currentTime = getTimeInSecondsWithNanoPrecision();
 		timeDiference = currentTime - previousTime;
 		previousTime = currentTime;
 
-		accumulatedRepaintTime += timeDiference;
+		accumulatedRenderTime += timeDiference;
 		accumulatedFrameTime += timeDiference;
 	}
 
-	private double getCurrentTimeInSecondsWithNanoPrecision() {
+	private double getTimeInSecondsWithNanoPrecision() {
 		return System.nanoTime() / 1_000_000_000.0;
 	}
 
 	private boolean isTimeToRender() {
-		if (accumulatedRepaintTime >= RENDER_TIME_LIMIT) {
-			accumulatedRepaintTime -= RENDER_TIME_LIMIT;
+		if (accumulatedRenderTime >= RENDER_TIME_LIMIT) {
+			accumulatedRenderTime -= RENDER_TIME_LIMIT;
 			return true;
 		} else {
 			return false;
@@ -97,6 +96,7 @@ public class GameContainer implements Runnable {
 	}
 
 	private void updateGameState() {
+		input.update();
 		printFpsOnConsole();
 	}
 

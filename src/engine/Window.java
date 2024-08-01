@@ -56,4 +56,8 @@ public final class Window{
 	public BufferedImage getImage() {
 		return image;
 	}
+
+	public Canvas getCanvas() {
+		return canvas;
+	}
 }
