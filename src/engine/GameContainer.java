@@ -62,10 +62,10 @@ public class GameContainer implements Runnable {
 
 	private void calculateTimePass() {
 		if (currentTime == 0) {
-			previousTime = getTimeInSecondsWithNanoPrecision();
+			previousTime = getTimeInSecWithNanoPrecision();
 		}
 
-		currentTime = getTimeInSecondsWithNanoPrecision();
+		currentTime = getTimeInSecWithNanoPrecision();
 		timeDiference = currentTime - previousTime;
 		previousTime = currentTime;
 
@@ -73,7 +73,7 @@ public class GameContainer implements Runnable {
 		accumulatedFrameTime += timeDiference;
 	}
 
-	private double getTimeInSecondsWithNanoPrecision() {
+	private double getTimeInSecWithNanoPrecision() {
 		return System.nanoTime() / 1_000_000_000.0;
 	}
 
