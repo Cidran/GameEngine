@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 
 import javax.swing.JFrame;
 
@@ -17,20 +16,25 @@ public final class Window{
 	private Canvas canvas;
 	private BufferStrategy bufferStrategy;
 	private Graphics graphics;
+	
+	private int scaledWidth;
+	private int scaledHeight;
 
 	Dimension dimension;
 
-	private int[] pixels;
-
 	public Window(GameContainer gc) {
-		image = new BufferedImage(gc.getWIDTH(), gc.getHEIGHT(), BufferedImage.TYPE_INT_RGB);
-		dimension = new Dimension((int) (gc.getWIDTH() * gc.getScale()), (int) (gc.getHEIGHT() * gc.getScale()));
+		image = new BufferedImage(gc.getWidth(), gc.getHeight(), BufferedImage.TYPE_INT_RGB);
+		
+		scaledWidth = (int) (gc.getWidth() * gc.getScale());
+		scaledHeight = (int) (gc.getHeight() * gc.getScale());
+		dimension = new Dimension(scaledWidth, scaledHeight);
+		
 		canvas = new Canvas();
 		canvas.setPreferredSize(dimension);
 		canvas.setMinimumSize(dimension);
 		canvas.setMaximumSize(dimension);
-
-		frame.setTitle(gc.getTITLE());
+		
+		frame = new JFrame(gc.getTitle());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		frame.add(canvas, BorderLayout.CENTER);
@@ -42,8 +46,6 @@ public final class Window{
 		canvas.createBufferStrategy(2);
 		bufferStrategy = canvas.getBufferStrategy();
 		graphics = bufferStrategy.getDrawGraphics();
-
-		pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 	}
 
 	public void update() {
@@ -51,9 +53,7 @@ public final class Window{
 		bufferStrategy.show();
 	}
 
-	public void clear() {
-		for (int i = 0; i < pixels.length; i++) {
-			pixels[i] = 0;
-		}
+	public BufferedImage getImage() {
+		return image;
 	}
 }

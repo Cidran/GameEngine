@@ -1,9 +1,10 @@
 package engine;
 
-public final class GameContainer implements Runnable {
+public class GameContainer implements Runnable {
 
 	private Thread thread;
 	private Window window;
+	private Renderer renderer;
 
 	private boolean isRunning = false;
 
@@ -15,12 +16,12 @@ public final class GameContainer implements Runnable {
 	private double timeDiference;
 	private double accumulatedRepaintTime;
 
-	double accumulatedFrameTime;
-	int frames;
-	
-	private final String TITLE = "MeuGame2D";
-	private final int WIDTH = 320;
-	private final int HEIGHT = 240;
+	private double accumulatedFrameTime;
+	private int frames;
+
+	private String title = "GameEngine";
+	private int width = 320;
+	private int height = 240;
 	private float scale = 2.4f;
 
 	public GameContainer() {
@@ -30,7 +31,8 @@ public final class GameContainer implements Runnable {
 	public synchronized void start() {
 		thread = new Thread(this);
 		window = new Window(this);
-		
+		renderer = new Renderer(this);
+
 		thread.run();
 	}
 
@@ -43,6 +45,7 @@ public final class GameContainer implements Runnable {
 		}
 	}
 
+	@Override
 	public void run() {
 		isRunning = true;
 
@@ -88,15 +91,16 @@ public final class GameContainer implements Runnable {
 		try {
 			Thread.sleep(1);
 		} catch (InterruptedException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 	}
 
 	private void updateGameState() {
-		printFPS();
+		printFpsOnConsole();
 	}
 
-	private void printFPS() {
+	private void printFpsOnConsole() {
 		if (accumulatedFrameTime >= 1.0) {
 			System.out.println("FPS: " + frames);
 			accumulatedFrameTime = 0;
@@ -105,7 +109,7 @@ public final class GameContainer implements Runnable {
 	}
 
 	private void renderGameCanvas() {
-		window.clear();
+		renderer.clear();
 		window.update();
 		frames++;
 	}
@@ -118,15 +122,19 @@ public final class GameContainer implements Runnable {
 		this.scale = scale;
 	}
 
-	public String getTITLE() {
-		return TITLE;
+	public String getTitle() {
+		return title;
 	}
 
-	public int getWIDTH() {
-		return WIDTH;
+	public int getWidth() {
+		return width;
 	}
 
-	public int getHEIGHT() {
-		return HEIGHT;
+	public int getHeight() {
+		return height;
+	}
+
+	public Window getWindow() {
+		return window;
 	}
 }
