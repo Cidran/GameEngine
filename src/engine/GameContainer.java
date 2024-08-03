@@ -1,24 +1,15 @@
 package engine;
 
-public class GameContainer implements Runnable {
+public class GameContainer{
 
 	private Thread thread;
+	private GameLoop gameLoop;
 	private Window window;
 	private Renderer renderer;
 	private Input input;
 
-	private boolean isRunning = false;
-
 	private final double FPS_TARGET = 60.0;
 	private final double RENDER_TIME_LIMIT = 1.0 / FPS_TARGET;
-
-	private double previousTime;
-	private double currentTime;
-	private double timeDiference;
-	private double accumulatedRenderTime;
-
-	private double accumulatedFrameTime;
-	private int frames;
 
 	private String title = "GameEngine";
 	private int width = 320;
@@ -34,84 +25,16 @@ public class GameContainer implements Runnable {
 	}
 
 	public synchronized void stop() {
-		isRunning = false;
+		gameLoop.setRunning(false);
 	}
 
-	@Override
-	public void run() {
-		isRunning = true;
-
-		while (isRunning) {
-			calculateTimePass();
-			updateGameState();
-
-			if (isTimeToRender()) {
-				renderGameCanvas();
-			} else {
-				waitOneMillisecond();
-			}
-		}
-	}
-	
 	private void initializeComponents() {
-		thread = new Thread(this);
+		gameLoop = new GameLoop(this);
 		window = new Window(this);
 		renderer = new Renderer(this);
 		input = new Input(this);
-	}
-
-	private void calculateTimePass() {
-		if (currentTime == 0) {
-			previousTime = getTimeInSecWithNanoPrecision();
-		}
-
-		currentTime = getTimeInSecWithNanoPrecision();
-		timeDiference = currentTime - previousTime;
-		previousTime = currentTime;
-
-		accumulatedRenderTime += timeDiference;
-		accumulatedFrameTime += timeDiference;
-	}
-
-	private double getTimeInSecWithNanoPrecision() {
-		return System.nanoTime() / 1_000_000_000.0;
-	}
-
-	private boolean isTimeToRender() {
-		if (accumulatedRenderTime >= RENDER_TIME_LIMIT) {
-			accumulatedRenderTime -= RENDER_TIME_LIMIT;
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private void waitOneMillisecond() {
-		try {
-			Thread.sleep(1);
-		} catch (InterruptedException e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
-	}
-
-	private void updateGameState() {
-		input.update();
-		printFpsOnConsole();
-	}
-
-	private void printFpsOnConsole() {
-		if (accumulatedFrameTime >= 1.0) {
-			System.out.println("FPS: " + frames);
-			accumulatedFrameTime = 0;
-			frames = 0;
-		}
-	}
-
-	private void renderGameCanvas() {
-		renderer.clear();
-		window.update();
-		frames++;
+		
+		thread = new Thread(gameLoop);
 	}
 
 	public float getScale() {
@@ -136,5 +59,17 @@ public class GameContainer implements Runnable {
 
 	public Window getWindow() {
 		return window;
+	}
+
+	public double getRENDER_TIME_LIMIT() {
+		return RENDER_TIME_LIMIT;
+	}
+
+	public Renderer getRenderer() {
+		return renderer;
+	}
+
+	public Input getInput() {
+		return input;
 	}
 }
