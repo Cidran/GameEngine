@@ -25,7 +25,7 @@ public class GameLoop implements Runnable {
 		isRunning = true;
 
 		while (isRunning) {
-			calculateTimePass();
+			calculatePassedTime();
 			updateGameState();
 
 			if (isTimeToRender()) {
@@ -36,8 +36,8 @@ public class GameLoop implements Runnable {
 		}
 	}
 
-	private void calculateTimePass() {
-		if (currentTime == 0) {
+	private void calculatePassedTime() {
+		if (previousTime == 0) {
 			previousTime = getTimeInSecWithNanoPrecision();
 		}
 

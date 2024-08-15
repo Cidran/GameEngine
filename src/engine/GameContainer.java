@@ -2,7 +2,7 @@ package engine;
 
 public class GameContainer{
 
-	private Thread thread;
+	private Thread loop;
 	private GameLoop gameLoop;
 	private Window window;
 	private Renderer renderer;
@@ -21,7 +21,7 @@ public class GameContainer{
 
 	public synchronized void start() {
 		initializeComponents();
-		thread.run();
+		loop.run();
 	}
 
 	public synchronized void stop() {
@@ -34,7 +34,7 @@ public class GameContainer{
 		renderer = new Renderer(this);
 		input = new Input(this);
 		
-		thread = new Thread(gameLoop);
+		loop = new Thread(gameLoop);
 	}
 
 	public float getScale() {
