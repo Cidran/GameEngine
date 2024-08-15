@@ -54,8 +54,8 @@ public class GameLoop implements Runnable {
 	}
 
 	private boolean isTimeToRender() {
-		if (accumulatedRenderTime >= gameContainer.getRENDER_TIME_LIMIT()) {
-			accumulatedRenderTime -= gameContainer.getRENDER_TIME_LIMIT();
+		if (accumulatedRenderTime >= gameContainer.getDeltaTime()) {
+			accumulatedRenderTime -= gameContainer.getDeltaTime();
 			return true;
 		} else {
 			return false;
@@ -72,10 +72,7 @@ public class GameLoop implements Runnable {
 	}
 
 	private void updateGameState() {
-		if (gameContainer.getInput().isKeyPressed(KeyEvent.VK_A)) {
-			System.out.println("A pressed!");
-		}
-
+		gameContainer.getGame().update(gameContainer, (float)gameContainer.getDeltaTime());
 		gameContainer.getInput().update();
 		printFpsOnConsole();
 	}
@@ -90,6 +87,7 @@ public class GameLoop implements Runnable {
 
 	private void renderGameCanvas() {
 		gameContainer.getRenderer().clear();
+		gameContainer.getGame().render(gameContainer, gameContainer.getRenderer());
 		gameContainer.getWindow().update();
 		frames++;
 	}

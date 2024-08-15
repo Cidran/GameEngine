@@ -7,16 +7,18 @@ public class GameContainer{
 	private Window window;
 	private Renderer renderer;
 	private Input input;
+	private AbstractGame game;
 
 	private final double FPS_TARGET = 60.0;
-	private final double RENDER_TIME_LIMIT = 1.0 / FPS_TARGET;
+	private final double DELTA_TIME = 1.0 / FPS_TARGET;
 
 	private String title = "GameEngine";
 	private int width = 320;
 	private int height = 240;
 	private float scale = 2.4f;
 
-	public GameContainer() {
+	public GameContainer(AbstractGame game) {
+		this.game = game;
 	}
 
 	public synchronized void start() {
@@ -61,8 +63,8 @@ public class GameContainer{
 		return window;
 	}
 
-	public double getRENDER_TIME_LIMIT() {
-		return RENDER_TIME_LIMIT;
+	public double getDeltaTime() {
+		return DELTA_TIME;
 	}
 
 	public Renderer getRenderer() {
@@ -71,5 +73,9 @@ public class GameContainer{
 
 	public Input getInput() {
 		return input;
+	}
+
+	public AbstractGame getGame() {
+		return game;
 	}
 }
