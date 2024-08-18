@@ -1,7 +1,5 @@
 package engine;
 
-import java.awt.event.KeyEvent;
-
 public class GameLoop implements Runnable {
 
 	private boolean isRunning;
@@ -72,7 +70,7 @@ public class GameLoop implements Runnable {
 	}
 
 	private void updateGameState() {
-		gameContainer.getGame().update(gameContainer, (float)gameContainer.getDeltaTime());
+		gameContainer.getGame().update(gameContainer);
 		gameContainer.getInput().update();
 		printFpsOnConsole();
 	}
@@ -87,7 +85,7 @@ public class GameLoop implements Runnable {
 
 	private void renderGameCanvas() {
 		gameContainer.getRenderer().clear();
-		gameContainer.getGame().render(gameContainer, gameContainer.getRenderer());
+		gameContainer.getGame().render(gameContainer);
 		gameContainer.getWindow().update();
 		frames++;
 	}
